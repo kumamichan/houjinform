@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#2A2733; --accent:#C24E36; --bg:#FBF7F3; --line:#E0D6D0; --sub:#5E5A66; --lav:#EEEBF3; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+    word-break:auto-phrase; line-break:strict; }
+  .wrap { max-width:560px; margin:0 auto; padding:28px 20px 48px; }
+  .brand { font-weight:700; letter-spacing:.12em; font-size:15px; margin-bottom:20px; }
+  .tag { display:inline-block; padding:5px 12px; border-radius:999px; background:var(--lav);
+    color:#4A4460; font-size:13px; font-weight:700; }
+  h1 { font-family:"Zen Maru Gothic",sans-serif; font-weight:900; font-size:26px; line-height:1.45;
+    margin:12px 0 8px; text-wrap:balance; }
+  .lead { font-size:15px; line-height:1.8; margin:0 0 24px; color:#3F3B48; }
+  .card { background:#fff; border:1.5px solid var(--line); border-radius:18px; padding:22px 18px; }
+  .field { margin-bottom:18px; }
+  label { display:block; font-weight:700; font-size:15px; margin-bottom:6px; }
+  .req { color:var(--accent); font-size:12px; margin-left:6px; }
+  .opt { color:var(--sub); font-size:12px; margin-left:6px; font-weight:500; }
+  input, select, textarea { width:100%; font:inherit; font-size:16px; color:var(--ink);
+    padding:12px 14px; border:1.5px solid var(--line); border-radius:12px; background:#fff; min-height:48px; }
+  textarea { min-height:120px; resize:vertical; line-height:1.6; }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:var(--accent); }
+  .hp { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+  button { width:100%; min-height:56px; border:0; border-radius:999px; background:var(--accent);
+    color:#fff; font:inherit; font-size:17px; font-weight:700; cursor:pointer; margin-top:6px; }
+  button:disabled { opacity:.6; cursor:default; }
+  .error { color:#A33A25; font-size:14px; margin-top:12px; min-height:1em; }
+  .note { font-size:13px; color:var(--sub); line-height:1.7; margin-top:14px; }
+  .thanks { display:none; text-align:center; padding:40px 18px; }
+  .thanks h2 { font-family:"Zen Maru Gothic",sans-serif; font-weight:900; font-size:24px; margin:0 0 12px; }
+  .thanks p { font-size:15px; line-height:1.8; margin:0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">UNION CARD</div>
+
+  <div id="formArea">
+    <span class="tag">団体・法人プラン</span>
+    <h1>お見積り・ご相談フォーム</h1>
+    <p class="lead">50枚から団体価格でご用意できます。<br>ロゴ印刷や初期設定の代行もお気軽にご相談ください。</p>
+
+    <form id="inquiry" class="card" novalidate>
+      <input type="hidden" name="src" value="<?= src ?>">
+      <input type="hidden" name="visitId" value="<?= visitId ?>">
+      <div class="hp" aria-hidden="true">
+        <label for="website">空欄のままにしてください</label>
+        <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <label for="company">会社・団体名<span class="req">必須</span></label>
+        <input id="company" name="company" type="text" autocomplete="organization" required>
+      </div>
+      <div class="field">
+        <label for="person">ご担当者名<span class="req">必須</span></label>
+        <input id="person" name="person" type="text" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="email">メールアドレス<span class="req">必須</span></label>
+        <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required>
+      </div>
+      <div class="field">
+        <label for="phone">電話番号<span class="opt">任意</span></label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel">
+      </div>
+      <div class="field">
+        <label for="quantity">ご希望枚数<span class="opt">任意</span></label>
+        <select id="quantity" name="quantity">
+          <option value="未定">未定・相談したい</option>
+          <option value="50〜99枚">50〜99枚</option>
+          <option value="100枚以上">100枚以上</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="message">ご相談内容<span class="opt">任意</span></label>
+        <textarea id="message" name="message" placeholder="ロゴ入れの希望、導入時期など"></textarea>
+      </div>
+
+      <button id="submitBtn" type="submit">この内容で送信する</button>
+      <div id="error" class="error" role="alert"></div>
+      <p class="note">いただいた情報は、お見積り・ご連絡の目的にのみ使用します。</p>
+    </form>
+  </div>
+
+  <div id="thanks" class="thanks card">
+    <h2>送信しました</h2>
+    <p>お問い合わせありがとうございます。<br>内容を確認のうえ、担当者よりご連絡いたします。</p>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('inquiry');
+  const btn = document.getElementById('submitBtn');
+  const err = document.getElementById('error');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    err.textContent = '';
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    if (!data.company.trim() || !data.person.trim() || !data.email.trim()) {
+      err.textContent = '必須項目をご入力ください。';
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
+      err.textContent = 'メールアドレスの形式をご確認ください。';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = '送信中…';
+    google.script.run
+      .withSuccessHandler(function () {
+        document.getElementById('formArea').style.display = 'none';
+        document.getElementById('thanks').style.display = 'block';
+        window.scrollTo(0, 0);
+      })
+      .withFailureHandler(function (error) {
+        btn.disabled = false;
+        btn.textContent = 'この内容で送信する';
+        err.textContent = '送信できませんでした：' + (error && error.message ? error.message : '時間をおいて再度お試しください');
+      })
+      .submitInquiry(data);
+  });
+</script>
+</body>
+</html>
